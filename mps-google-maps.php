@@ -3,7 +3,7 @@
  * Plugin Name: Miroslav PS Google Maps Plugin
  * Plugin URI: https://github.com/m-stoev/mps-google-maps
  * Description: Plugin for Google maps and POIs.
- * Version: 0.1
+ * Version: 1
  * Author: Miroslav Stoev
 */
 
@@ -109,12 +109,28 @@ function mps_tr($string) {
 	return $string;
 }
 
+// render options page
 function mps_render_page() {
 	if (!current_user_can('manage_options')) {
         return;
     }
 	
 	global $mp_ds;
+	
+	// get available icons names
+	$names = [];
+	
+	$icons_dir = dirname(__FILE__) . $mp_ds . 'icons' . $mp_ds . 'map' . $mp_ds;
+	$files = scandir($icons_dir, SCANDIR_SORT_ASCENDING);
+	
+	foreach($files as $file) {
+		if(!in_array($file, ['.', '..', '.htaccess'])) {
+			$names[] = basename($icons_dir . $file, '.png');
+		}
+	}
+	
+	$list = implode(', ', $names);
+	// get available icons names END
 	
 	ob_start();
 	//the_ID();
@@ -124,8 +140,41 @@ function mps_render_page() {
 }
 
 function mps_generate_shortcode() {
-	global $mp_ds;
+	global $mp_ds, $mps_locale;
+    
+    // get fields names
+    $google_api_key = get_option('google_api_key', '');
+    $lat            = get_option('lat_met_field', '');
+    $lng            = get_option('lng_met_field', '');
+    $icon           = get_option('icon_met_field', '');
+    
+	// get coordinates and icons
+	$pois = [];
 	
+	$args = [
+		'post_type'     => 'post',
+		'meta_key'      => 'icon',
+		'lang'			=> substr($mps_locale, 0, 2),
+		'fields'		=> 'ids',
+	];
+	
+	$posts = new WP_Query( $args );
+	
+	foreach($posts->posts as $id) {
+		$pois[$id] = [
+			'lat' => current(get_post_meta($id, $lat)),
+			'lng' => current(get_post_meta($id, $lng)),
+			'icon' => current(get_post_meta($id, $icon)),
+			'link' => urldecode(current(get_post_meta($id, 'custom_permalink'))),
+            'title' => get_the_title($id)
+		];
+	}
+    
+    $pois_json = json_encode($pois);
+    // get coordinates and icons END
+	
+    $plugin_url = plugin_dir_url( __FILE__ );
+    
 	ob_start();
 	//the_ID();
 	

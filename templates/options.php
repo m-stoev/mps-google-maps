@@ -12,5 +12,6 @@
 		<?php submit_button(); ?>
 	</form>
 	
-	<p><?= mps_tr('Your page short code is'); ?>: [mps-google-map]</p>
+	<p><b><?= mps_tr('List of icons names') . ':</b> ' . $list; ?></p>
+	<p><b><?= mps_tr('Your page short code is'); ?>:</b> [mps-google-map]</p>
 </div>
