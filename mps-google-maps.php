@@ -142,39 +142,44 @@ function mps_render_page() {
 function mps_generate_shortcode() {
 	global $mp_ds, $mps_locale;
     
-    // get fields names
-    $google_api_key = get_option('google_api_key', '');
-    $lat            = get_option('lat_met_field', '');
-    $lng            = get_option('lng_met_field', '');
-    $icon           = get_option('icon_met_field', '');
-    
-	// get coordinates and icons
-	$pois = [];
-	
-	$args = [
-		'post_type'     => 'post',
-		'meta_key'      => 'icon',
-		'lang'			=> substr($mps_locale, 0, 2),
-		'fields'		=> 'ids',
-	];
-	
-	$posts = new WP_Query( $args );
-	
-	foreach($posts->posts as $id) {
-		$pois[$id] = [
-			'lat' => current(get_post_meta($id, $lat)),
-			'lng' => current(get_post_meta($id, $lng)),
-			'icon' => current(get_post_meta($id, $icon)),
-			'link' => urldecode(current(get_post_meta($id, 'custom_permalink'))),
-            'title' => get_the_title($id)
-		];
-	}
-    
-    $pois_json = json_encode($pois);
-    // get coordinates and icons END
-	
     $plugin_url = plugin_dir_url( __FILE__ );
     
+    // get fields names
+    $google_api_key = get_option('google_api_key', '');
+    $lat            = get_option('lat_met_field', false);
+    $lng            = get_option('lng_met_field', false);
+    $icon           = get_option('icon_met_field', false);
+    
+    if($lat and $lng and $icon) {
+        // get coordinates and icons
+        $pois       = [];
+        $pois_json  = '';
+
+        $args = [
+            'post_type'     => 'post',
+            'meta_key'      => 'icon',
+            'lang'			=> substr($mps_locale, 0, 2),
+            'fields'		=> 'ids',
+        ];
+
+        $posts = new WP_Query( $args );
+
+        if($posts) {
+            foreach($posts->posts as $id) {
+                $pois[$id] = [
+                    'lat' => current(get_post_meta($id, $lat)),
+                    'lng' => current(get_post_meta($id, $lng)),
+                    'icon' => current(get_post_meta($id, $icon)),
+                    'link' => urldecode(current(get_post_meta($id, 'custom_permalink'))),
+                    'title' => get_the_title($id)
+                ];
+            }
+
+            $pois_json = json_encode($pois);
+        }
+        // get coordinates and icons END
+    }
+	
 	ob_start();
 	//the_ID();
 	

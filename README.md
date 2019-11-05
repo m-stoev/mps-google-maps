@@ -10,3 +10,5 @@ To use markers in the map install:
 
 in each post you must add Latitude, Longtitude and Icon field and pass their names in the plugin options page.  
 The maps icons are limited to the plugin collection.
+
+TODO: custom map center coordinates;
