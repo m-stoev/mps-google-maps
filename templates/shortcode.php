@@ -8,7 +8,7 @@
 
 ?>
 
-<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?keyAIzaSyBHO9tebIeSsft8FFuiAaPyLTGknc7lpvY&sensor=false&libraries=geometry&language=<?= substr( get_bloginfo ( 'language' ), 0, 2 ); ?>"></script>
+<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=&sensor=false&libraries=geometry&language=<?= substr( get_bloginfo ( 'language' ), 0, 2 ); ?>"></script>
 <script type="text/javascript" src="<?php echo esc_url(get_template_directory_uri()); ?>/js/google-maps/maplabel-compiled.min.js"></script>
 <script type="text/javascript" src="<?php echo esc_url(get_template_directory_uri()); ?>/js/google-maps/markerclusterer.min.js"></script>
 

@@ -1,4 +1,8 @@
 {
-	"Google Maps"		: "Гугъл Карти",
-	"MPS Map Settings"	: "MPS Карта настройки"
+	"Google Maps"					: "Гугъл Карти",
+	"MPS Map Settings"				: "MPS Карта настройки",
+	"Latitude Meta field name"		: "Име на Мета полето за Географска ширина (lat)",
+	"Longtitude Meta field name"	: "Име на Мета полето за Географска дължина (lng)",
+	"Icon Meta field name"			: "Име на Мета полето за маркер",
+	"Your page short code is"		: "Код за извикване на картата"
 }
