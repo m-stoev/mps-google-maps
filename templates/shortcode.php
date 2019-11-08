@@ -37,14 +37,13 @@
                     map: map,
                     icon: '<?= $plugin_url; ?>icons/map/' + mapPoints[i].icon + '.png',
                     title: mapPoints[i].title,
-                    url: mapPoints[i].link,
+                    url: "<?= get_site_url() . '/'; ?>" + mapPoints[i].link,
                     labelClass: "map_labels"
                 });
 
                 // dobawqme event listener za klik warhu marker, koito wodi do negowoto url
                 google.maps.event.addListener(marker, 'click', function() {
                     window.open(this.url, "_blank");
-                //	window.focus();
                 });
 
                 markers.push(marker);
