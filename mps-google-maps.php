@@ -34,7 +34,7 @@ function mps_gm_init() {
 }
 
 function mps_inspect_page_id($post) {
-	if(is_admin()) {
+	if(is_admin() or is_home()) {
 		return;
 	}
 	
