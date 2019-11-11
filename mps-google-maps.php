@@ -85,7 +85,6 @@ function mps_settings_init() {
 			'field' => 'google_api_key',
 			'label'	=> mps_tr('Google Api Key'),
 			'type'	=> 'text',
-			'style'	=> 'width: 400px;'
 		],
 		[
 			'field' => 'lat_met_field',
@@ -134,13 +133,14 @@ function mps_settings_init() {
 }
 
 function mps_settings_cb($args) {
-	$field_name	= esc_attr(get_option($args['name'], ''));
-	$field_type	= esc_attr($args['type']);
-	$field_style	= @$args['style'];
+	$field_name		= esc_attr($args['field']);
+	$field_val		= get_option($field_name, '');
+	$field_type		= esc_attr($args['type']);
+	$field_style	= esc_attr(@$args['style']);
 	
 	echo
 		'<div id="titlediv">
-			<input id="mps_' . $field_name . '" type="'. $field_type .'" name="' . $field_name . '" value="' . $field_name . '" style="'. ($field_style ? $field_style : '') .'" />
+			<input id="mps_' . $field_name . '" type="'. $field_type .'" name="' . $field_name . '" value="' . $field_val . '" style="'. ($field_style ? $field_style : '') .'" />
 		</div>';
 }
 
