@@ -29,10 +29,11 @@ function mps_gm_init() {
 	}
 	
 	add_shortcode('mps-google-map', 'mps_generate_shortcode');
-	add_action( 'template_redirect', 'mps_inspect_page_id' );
+//	add_action( 'template_redirect', 'mps_inspect_page_id' );
+	add_action( 'the_post', 'mps_inspect_page_id' );
 }
 
-function mps_inspect_page_id() {
+function mps_inspect_page_id($post) {
 	if(is_admin()) {
 		return;
 	}
@@ -48,20 +49,21 @@ function mps_inspect_page_id() {
 	// get fields names
     $lat_field_name		= get_option('lat_met_field', false);
     $lng_field_name		= get_option('lng_met_field', false);
+    $title_link			= get_option('title_link_met_field', false);
 	
-	if(!$lat_field_name or !$lng_field_name) {
+	if(!$lat_field_name or !$lng_field_name or !$title_link) {
 		return;
 	}
 	
-	$page_id	= get_queried_object_id();
-	$lat		= current(get_post_meta($page_id, $lat_field_name, []));
-	$lng		= current(get_post_meta($page_id, $lng_field_name, []));
+	$lat		= current(get_post_meta($post->ID, $lat_field_name, []));
+	$lng		= current(get_post_meta($post->ID, $lng_field_name, []));
 	
 	if(empty($lat) or empty($lng)) {
 		return;
 	}
 	
-	var_dump($lng);
+	$post->post_title = '<a href="' . esc_url($title_link . $lat . '+' . $lng)
+		. '" rel="nofollow" target="_blank">' . $post->post_title . '</a>';
 }
 
 function mps_add_plugin_menu() {
