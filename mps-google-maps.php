@@ -29,6 +29,39 @@ function mps_gm_init() {
 	}
 	
 	add_shortcode('mps-google-map', 'mps_generate_shortcode');
+	add_action( 'template_redirect', 'mps_inspect_page_id' );
+}
+
+function mps_inspect_page_id() {
+	if(is_admin()) {
+		return;
+	}
+	
+	global $mp_lang_strings;
+	
+	$current_page = add_query_arg( array() ); // the url
+	
+	if(strpos(urldecode($current_page), mb_strtolower($mp_lang_strings['Gallery']) === false)) {
+		return;
+	}
+	
+	// get fields names
+    $lat_field_name		= get_option('lat_met_field', false);
+    $lng_field_name		= get_option('lng_met_field', false);
+	
+	if(!$lat_field_name or !$lng_field_name) {
+		return;
+	}
+	
+	$page_id	= get_queried_object_id();
+	$lat		= current(get_post_meta($page_id, $lat_field_name, []));
+	$lng		= current(get_post_meta($page_id, $lng_field_name, []));
+	
+	if(empty($lat) or empty($lng)) {
+		return;
+	}
+	
+	var_dump($lng);
 }
 
 function mps_add_plugin_menu() {
@@ -50,19 +83,30 @@ function mps_settings_init() {
 	$fields = [
 		[
 			'field' => 'google_api_key',
-			'label'	=> mps_tr('Google Api Key')
+			'label'	=> mps_tr('Google Api Key'),
+			'type'	=> 'text',
+			'style'	=> 'width: 400px;'
 		],
 		[
 			'field' => 'lat_met_field',
-			'label'	=> mps_tr('Latitude Meta field name')
+			'label'	=> mps_tr('Latitude Meta field name'),
+			'type'	=> 'text',
 		],
 		[
 			'field' => 'lng_met_field',
-			'label'	=> mps_tr('Longtitude Meta field name')
+			'label'	=> mps_tr('Longtitude Meta field name'),
+			'type'	=> 'text',
 		],
 		[
 			'field' => 'icon_met_field',
-			'label'	=> mps_tr('Icon Meta field name')
+			'label'	=> mps_tr('Icon Meta field name'),
+			'type'	=> 'text',
+		],
+		[
+			'field'	=> 'title_link_met_field',
+			'label'	=> mps_tr('Map link in the Title'),
+			'type'	=> 'text',
+			'style'	=> 'width: 400px;'
 		],
 	];
 	
@@ -84,18 +128,19 @@ function mps_settings_init() {
 			'mps_settings_cb', // callback
 			'mps_gm_settings', // page
 			'mps-settings-section', // section
-			[$field['field']]
+			$field
 		);
 	}
 }
 
-function mps_settings_cb($key) {
-	$field_name = current($key);
-	$field = esc_attr(get_option($field_name, ''));
+function mps_settings_cb($args) {
+	$field_name	= esc_attr(get_option($args['name'], ''));
+	$field_type	= esc_attr($args['type']);
+	$field_style	= @$args['style'];
 	
 	echo
 		'<div id="titlediv">
-			<input id="mps_' . $field_name . '" type="text" name="' . $field_name . '" value="' . $field . '">
+			<input id="mps_' . $field_name . '" type="'. $field_type .'" name="' . $field_name . '" value="' . $field_name . '" style="'. ($field_style ? $field_style : '') .'" />
 		</div>';
 }
 

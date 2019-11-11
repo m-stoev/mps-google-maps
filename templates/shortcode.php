@@ -31,7 +31,6 @@
             var mcOptions = {gridSize: 50, maxZoom: 10};
 
             for(var i in mapPoints) {
-
                 var marker = new google.maps.Marker({
                     position: new google.maps.LatLng(mapPoints[i].lat,mapPoints[i].lng),
                     map: map,
