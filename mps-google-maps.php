@@ -3,14 +3,14 @@
  * Plugin Name: Miroslav PS Google Maps Plugin
  * Plugin URI: https://github.com/m-stoev/mps-google-maps
  * Description: Plugin for Google maps and POIs.
- * Version: 1.1
+ * Version: 1.2
  * Author: Miroslav Stoev
 */
 
 defined('ABSPATH') || die('die');
 
 add_action('plugins_loaded',	'mps_gm_init', 0);
-add_action('admin_menu',		'mps_add_plugin_menu');
+add_action('admin_menu',		'mps_gm_add_plugin_menu');
 
 $mp_lang_strings	= [];
 $mp_ds				= DIRECTORY_SEPARATOR;
@@ -28,12 +28,11 @@ function mps_gm_init() {
 		);
 	}
 	
-	add_shortcode('mps-google-map', 'mps_generate_shortcode');
-//	add_action( 'template_redirect', 'mps_inspect_page_id' );
-	add_action( 'the_post', 'mps_inspect_page_id' );
+	add_shortcode('mps-google-map', 'mps_gm_generate_shortcode');
+	add_action( 'the_post', 'mps_gm_open_post' );
 }
 
-function mps_inspect_page_id($post) {
+function mps_gm_open_post($post) {
 	if(is_admin() or is_home()) {
 		return;
 	}
@@ -62,52 +61,49 @@ function mps_inspect_page_id($post) {
 		return;
 	}
 	
-	$post->post_title = '<a href="' . esc_url($title_link . $lat . '+' . $lng)
+	$g_map_url = 'https://www.google.com/maps/place/';
+	
+	$post->post_title = '<a href="' . esc_url($g_map_url . $lat . ',' . $lng)
 		. '" rel="nofollow" target="_blank">' . $post->post_title . '</a>';
 }
 
-function mps_add_plugin_menu() {
+function mps_gm_add_plugin_menu() {
 	add_menu_page(
-		'MPS ' . mps_tr('Google Map'), // title
-		'MPS ' . mps_tr('Google Map'), // title
+		mps_gm_tr('Google Map'), // title
+		mps_gm_tr('Google Map'), // title
 		'manage_options', // capability of the user to see this page
 		'mps_gm_settings', // the slug
-		'mps_render_page', // the render function
+		'mps_gm_render_page', // the render function
 		'dashicons-admin-site-alt' // menu icon
 	);
 	
-	add_action('admin_init', 'mps_settings_init');
+	add_action('admin_init', 'mps_gm_settings_init');
 }
 
-function mps_settings_init() {
+function mps_gm_settings_init() {
 	global $mp_lang_strings, $mp_ds;
 	
 	$fields = [
 		[
 			'field' => 'google_api_key',
-			'label'	=> mps_tr('Google Api Key'),
+			'label'	=> mps_gm_tr('Google Api Key'),
 			'type'	=> 'text',
+			'style'	=> 'width: 400px;',
 		],
 		[
 			'field' => 'lat_met_field',
-			'label'	=> mps_tr('Latitude Meta field name'),
+			'label'	=> mps_gm_tr('Latitude Meta field name'),
 			'type'	=> 'text',
 		],
 		[
 			'field' => 'lng_met_field',
-			'label'	=> mps_tr('Longtitude Meta field name'),
+			'label'	=> mps_gm_tr('Longtitude Meta field name'),
 			'type'	=> 'text',
 		],
 		[
 			'field' => 'icon_met_field',
-			'label'	=> mps_tr('Icon Meta field name'),
+			'label'	=> mps_gm_tr('Icon Meta field name'),
 			'type'	=> 'text',
-		],
-		[
-			'field'	=> 'title_link_met_field',
-			'label'	=> mps_tr('Map link in the Title'),
-			'type'	=> 'text',
-			'style'	=> 'width: 400px;'
 		],
 	];
 	
@@ -126,7 +122,7 @@ function mps_settings_init() {
 		add_settings_field(
 			$field['field'], // field name
 			$field['label'], // lable text
-			'mps_settings_cb', // callback
+			'mps_gm_settings_cb', // callback
 			'mps_gm_settings', // page
 			'mps-settings-section', // section
 			$field
@@ -134,7 +130,7 @@ function mps_settings_init() {
 	}
 }
 
-function mps_settings_cb($args) {
+function mps_gm_settings_cb($args) {
 	$field_name		= esc_attr($args['field']);
 	$field_val		= get_option($field_name, '');
 	$field_type		= esc_attr($args['type']);
@@ -146,7 +142,7 @@ function mps_settings_cb($args) {
 		</div>';
 }
 
-function mps_tr($string) {
+function mps_gm_tr($string) {
 	global $mp_lang_strings;
 	
 	if (!empty($mp_lang_strings[$string])) {
@@ -157,7 +153,7 @@ function mps_tr($string) {
 }
 
 // render options page
-function mps_render_page() {
+function mps_gm_render_page() {
 	if (!current_user_can('manage_options')) {
         return;
     }
@@ -185,7 +181,7 @@ function mps_render_page() {
 	echo ob_get_clean();
 }
 
-function mps_generate_shortcode() {
+function mps_gm_generate_shortcode() {
 	global $mp_ds, $mps_locale;
     
     $plugin_url = plugin_dir_url( __FILE__ );

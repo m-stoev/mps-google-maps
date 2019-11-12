@@ -8,7 +8,8 @@ To use markers in the map install:
 1."Advanced custom fields" plugin  
 2."Custom permalinks" plugin
 
-in each post you must add Latitude, Longtitude and Icon field and pass their names in the plugin options page.  
+To use the plugin for each post you must add Latitude, Longtitude and Icon field fields.  
+Pass their names in the plugin options page. To show post coordinates on the map page.  
 The maps icons are limited to the plugin collection.
 
 TODO: custom map center coordinates;

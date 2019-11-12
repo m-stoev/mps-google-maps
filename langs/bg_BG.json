@@ -1,6 +1,6 @@
 {
 	"Google Map"					: "Гугъл Карта",
-	"MPS Map Settings"				: "MPS Карта настройки",
+	"Map Settings"					: "Настройки за картата",
 	"Latitude Meta field name"		: "Име на Мета полето за Географска ширина (lat)",
 	"Longtitude Meta field name"	: "Име на Мета полето за Географска дължина (lng)",
 	"Icon Meta field name"			: "Име на Мета полето за маркер",
