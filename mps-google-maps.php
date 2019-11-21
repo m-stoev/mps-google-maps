@@ -3,7 +3,7 @@
  * Plugin Name: Miroslav PS Google Maps Plugin
  * Plugin URI: https://github.com/m-stoev/mps-google-maps
  * Description: Plugin for Google maps and POIs.
- * Version: 1.2
+ * Version: 1.3
  * Author: Miroslav Stoev
 */
 
@@ -223,6 +223,8 @@ function mps_gm_generate_shortcode() {
         }
         // get coordinates and icons END
     }
+	
+	$base_url = plugin_dir_url(__FILE__);
 	
 	ob_start();
 	
