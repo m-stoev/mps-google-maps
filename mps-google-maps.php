@@ -3,8 +3,10 @@
  * Plugin Name: Miroslav PS Google Maps Plugin
  * Plugin URI: https://github.com/m-stoev/mps-google-maps
  * Description: Plugin for Google maps and POIs.
- * Version: 1.4
+ * Version: 1.5
  * Author: Miroslav Stoev
+ * Text Domain: mps-google-maps
+ * Domain Path: /langs
 */
 
 defined('ABSPATH') || die('die');
@@ -13,22 +15,9 @@ add_action('plugins_loaded',		'mps_gm_init', 0);
 add_action('admin_menu',			'mps_gm_add_plugin_menu');
 add_action('wp_enqueue_scripts',	'mps_gm_load_scripts');
 
-$mp_lang_strings	= [];
-$mp_ds				= DIRECTORY_SEPARATOR;
-$mps_locale;
-
 function mps_gm_init() {
-	global $mp_lang_strings, $mps_locale, $mp_ds;
-	
-	$mps_locale = get_locale();
-	
-	if ('bg_BG' == $mps_locale) {
-		$mp_lang_strings = json_decode(
-			file_get_contents(plugin_dir_path(__FILE__) . 'langs' . $mp_ds . $mps_locale . '.json'),
-			true
-		);
-	}
-	
+	load_plugin_textdomain( 'mps-google-maps', FALSE, basename( dirname( __FILE__ ) )
+		. DIRECTORY_SEPARATOR . 'langs' . DIRECTORY_SEPARATOR );
 	add_shortcode('mps-google-map', 'mps_gm_generate_shortcode');
 	add_action( 'the_post', 'mps_gm_open_post' );
 }
@@ -53,11 +42,9 @@ function mps_gm_open_post($post) {
 		return;
 	}
 	
-	global $mp_lang_strings;
-	
 	$current_page = add_query_arg( array() ); // the url
 	
-	if(strpos(urldecode($current_page), mb_strtolower($mp_lang_strings['Gallery']) === false)) {
+	if(strpos(urldecode($current_page), mb_strtolower(__('Gallery', 'mps-google-maps')) === false)) {
 		return;
 	}
 	
@@ -85,8 +72,8 @@ function mps_gm_open_post($post) {
 
 function mps_gm_add_plugin_menu() {
 	add_menu_page(
-		mps_gm_tr('Google Map'), // title
-		mps_gm_tr('Google Map'), // title
+		__('Google Map', 'mps-google-maps'), // title
+		__('Google Map', 'mps-google-maps'), // title
 		'manage_options', // capability of the user to see this page
 		'mps_gm_settings', // the slug
 		'mps_gm_render_page', // the render function
@@ -97,28 +84,26 @@ function mps_gm_add_plugin_menu() {
 }
 
 function mps_gm_settings_init() {
-	global $mp_lang_strings, $mp_ds;
-	
 	$fields = [
 		[
 			'field' => 'google_api_key',
-			'label'	=> mps_gm_tr('Google Api Key'),
+			'label'	=> __('Google Api Key', 'mps-google-maps'),
 			'type'	=> 'text',
 			'style'	=> 'width: 400px;',
 		],
 		[
 			'field' => 'lat_met_field',
-			'label'	=> mps_gm_tr('Latitude Meta field name'),
+			'label'	=> __('Latitude Meta field name', 'mps-google-maps'),
 			'type'	=> 'text',
 		],
 		[
 			'field' => 'lng_met_field',
-			'label'	=> mps_gm_tr('Longtitude Meta field name'),
+			'label'	=> __('Longtitude Meta field name', 'mps-google-maps'),
 			'type'	=> 'text',
 		],
 		[
 			'field' => 'icon_met_field',
-			'label'	=> mps_gm_tr('Icon Meta field name'),
+			'label'	=> __('Icon Meta field name', 'mps-google-maps'),
 			'type'	=> 'text',
 		],
 	];
@@ -158,28 +143,16 @@ function mps_gm_settings_cb($args) {
 		</div>';
 }
 
-function mps_gm_tr($string) {
-	global $mp_lang_strings;
-	
-	if (!empty($mp_lang_strings[$string])) {
-		return $mp_lang_strings[$string];
-	}
-	
-	return $string;
-}
-
 // render options page
 function mps_gm_render_page() {
 	if (!current_user_can('manage_options')) {
         return;
     }
 	
-	global $mp_ds;
-	
 	// get available icons names
 	$names = [];
 	
-	$icons_dir = dirname(__FILE__) . $mp_ds . 'icons' . $mp_ds . 'map' . $mp_ds;
+	$icons_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'map' . DIRECTORY_SEPARATOR;
 	$files = scandir($icons_dir, SCANDIR_SORT_ASCENDING);
 	
 	foreach($files as $file) {
@@ -193,13 +166,11 @@ function mps_gm_render_page() {
 	
 	ob_start();
 	
-	require plugin_dir_path(__FILE__) . 'templates' . $mp_ds . 'options.php';
+	require plugin_dir_path(__FILE__) . 'templates' . DIRECTORY_SEPARATOR . 'options.php';
 	echo ob_get_clean();
 }
 
 function mps_gm_generate_shortcode() {
-	global $mp_ds, $mps_locale;
-    
     $plugin_url = plugin_dir_url( __FILE__ );
     
     // get fields names
@@ -217,7 +188,7 @@ function mps_gm_generate_shortcode() {
 			'meta_key'		=> 'icon',
 			'meta_value'	=> array(''),
 			'meta_compare'	=> 'NOT IN',
-			'lang'			=> substr($mps_locale, 0, 2),
+			'lang'			=> substr(get_locale(), 0, 2),
 			'fields'		=> 'ids',
         ];
 
@@ -241,6 +212,6 @@ function mps_gm_generate_shortcode() {
 	
 	ob_start();
 	
-	require plugin_dir_path(__FILE__) . 'templates' . $mp_ds . 'shortcode.php';
+	require plugin_dir_path(__FILE__) . 'templates' . DIRECTORY_SEPARATOR . 'shortcode.php';
 	return ob_get_clean();
 }

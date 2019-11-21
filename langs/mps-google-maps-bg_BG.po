@@ -1,0 +1,36 @@
+# Translation of MPS Google Maps Plugin
+
+msgid ""
+msgstr ""
+
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: PoEdit\n"
+"Language: bg\n"
+"Project-Id-Version: MPS Google Maps Plugin\n"
+
+msgid "Google Map"
+msgstr "Гугъл Карта"
+
+msgid "Map Settings"
+msgstr "Настройки за картата"
+
+msgid "Latitude Meta field name"
+msgstr "Име на Мета полето за Географска ширина (lat)"
+
+msgid "Longtitude Meta field name"
+msgstr "Име на Мета полето за Географска дължина (lng)"
+
+msgid "Icon Meta field name"
+msgstr "Име на Мета полето за маркер"
+
+msgid "Your page short code is"
+msgstr "Код за извикване на картата"
+
+msgid "Gallery"
+msgstr "Галерия"
+
+msgid "List of icons names"
+msgstr "Списък с имента на иконите"
