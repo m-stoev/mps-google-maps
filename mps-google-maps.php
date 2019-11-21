@@ -3,14 +3,15 @@
  * Plugin Name: Miroslav PS Google Maps Plugin
  * Plugin URI: https://github.com/m-stoev/mps-google-maps
  * Description: Plugin for Google maps and POIs.
- * Version: 1.3
+ * Version: 1.4
  * Author: Miroslav Stoev
 */
 
 defined('ABSPATH') || die('die');
 
-add_action('plugins_loaded',	'mps_gm_init', 0);
-add_action('admin_menu',		'mps_gm_add_plugin_menu');
+add_action('plugins_loaded',		'mps_gm_init', 0);
+add_action('admin_menu',			'mps_gm_add_plugin_menu');
+add_action('wp_enqueue_scripts',	'mps_gm_load_scripts');
 
 $mp_lang_strings	= [];
 $mp_ds				= DIRECTORY_SEPARATOR;
@@ -30,6 +31,21 @@ function mps_gm_init() {
 	
 	add_shortcode('mps-google-map', 'mps_gm_generate_shortcode');
 	add_action( 'the_post', 'mps_gm_open_post' );
+}
+
+function mps_gm_load_scripts() {
+	if(is_page()) {
+		global $post;
+		
+		if(strpos($post->post_content, '[mps-google-map]') !== false) {
+			wp_enqueue_script('google_maps_api', '//maps.googleapis.com/maps/api/js?key='
+				. get_option('google_api_key', '') .'&sensor=false&libraries=geometry&language='
+				. substr( get_bloginfo ( 'language' ), 0, 2 ));
+
+			wp_enqueue_script('mps-maplabel', plugin_dir_url(__FILE__) . 'js/google-maps/maplabel-compiled.min.js');
+			wp_enqueue_script('mps-makercluster',  plugin_dir_url(__FILE__) . 'js/google-maps/markerclusterer.min.js');
+		}
+	}
 }
 
 function mps_gm_open_post($post) {
@@ -187,7 +203,6 @@ function mps_gm_generate_shortcode() {
     $plugin_url = plugin_dir_url( __FILE__ );
     
     // get fields names
-    $google_api_key = get_option('google_api_key', '');
     $lat            = get_option('lat_met_field', false);
     $lng            = get_option('lng_met_field', false);
     $icon           = get_option('icon_met_field', false);
@@ -223,8 +238,6 @@ function mps_gm_generate_shortcode() {
         }
         // get coordinates and icons END
     }
-	
-	$base_url = plugin_dir_url(__FILE__);
 	
 	ob_start();
 	

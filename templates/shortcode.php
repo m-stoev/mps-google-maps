@@ -1,16 +1,3 @@
-<?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-?>
-
-<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=<?= esc_attr($google_api_key); ?>&sensor=false&libraries=geometry&language=<?= substr( get_bloginfo ( 'language' ), 0, 2 ); ?>"></script>
-<script type="text/javascript" src="<?= esc_url($base_url . 'js/google-maps/maplabel-compiled.min.js'); ?>"></script>
-<script type="text/javascript" src="<?= esc_url($base_url . 'js/google-maps/markerclusterer.min.js'); ?>"></script>
 
 <div id="custom-map" style="height: 600px;"></div>
     
