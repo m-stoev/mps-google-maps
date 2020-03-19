@@ -42,32 +42,30 @@ function mps_gm_open_post($post) {
 		return;
 	}
 	
-	$current_page = add_query_arg( array() ); // the url
+	$current_page = urldecode(add_query_arg( array() )); // the url
 	
-	if(strpos(urldecode($current_page), mb_strtolower(__('Gallery', 'mps-google-maps')) === false)) {
-		return;
+	if(strpos($current_page, __('Gallery', 'mps-google-maps')) !== false) {
+		// get fields names
+		$lat_field_name		= get_option('lat_met_field', false);
+		$lng_field_name		= get_option('lng_met_field', false);
+		$title_link			= get_option('title_link_met_field', false);
+
+		if(!$lat_field_name or !$lng_field_name or !$title_link) {
+			return;
+		}
+
+		$lat		= current(get_post_meta($post->ID, $lat_field_name, []));
+		$lng		= current(get_post_meta($post->ID, $lng_field_name, []));
+
+		if(empty($lat) or empty($lng)) {
+			return;
+		}
+
+		$g_map_url = 'https://www.google.com/maps/place/';
+
+		$post->post_title = '<a href="' . esc_url($g_map_url . $lat . ',' . $lng)
+			. '" rel="nofollow" target="_blank">' . $post->post_title . '</a>';
 	}
-	
-	// get fields names
-    $lat_field_name		= get_option('lat_met_field', false);
-    $lng_field_name		= get_option('lng_met_field', false);
-    $title_link			= get_option('title_link_met_field', false);
-	
-	if(!$lat_field_name or !$lng_field_name or !$title_link) {
-		return;
-	}
-	
-	$lat		= current(get_post_meta($post->ID, $lat_field_name, []));
-	$lng		= current(get_post_meta($post->ID, $lng_field_name, []));
-	
-	if(empty($lat) or empty($lng)) {
-		return;
-	}
-	
-	$g_map_url = 'https://www.google.com/maps/place/';
-	
-	$post->post_title = '<a href="' . esc_url($g_map_url . $lat . ',' . $lng)
-		. '" rel="nofollow" target="_blank">' . $post->post_title . '</a>';
 }
 
 function mps_gm_add_plugin_menu() {
