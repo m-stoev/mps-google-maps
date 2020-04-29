@@ -3,7 +3,7 @@
  * Plugin Name: Miroslav PS Google Maps Plugin
  * Plugin URI: https://github.com/m-stoev/mps-google-maps
  * Description: Plugin for Google maps and POIs.
- * Version: 1.5
+ * Version: 1.6
  * Author: Miroslav Stoev
  * Text Domain: mps-google-maps
  * Domain Path: /langs
@@ -183,17 +183,18 @@ function mps_gm_generate_shortcode() {
 
         $args = [
             'post_type'		=> 'post',
-			'meta_key'		=> 'icon',
-			'meta_value'	=> array(''),
-			'meta_compare'	=> 'NOT IN',
-			'lang'			=> substr(get_locale(), 0, 2),
-			'fields'		=> 'ids',
+		'meta_key'	=> 'icon',
+		'meta_value'	=> array(''),
+		'meta_compare'	=> 'NOT IN',
+		'lang'		=> substr(get_locale(), 0, 2),
+		'fields'	=> 'ids',
+		'numberposts'	=> -1,
         ];
 
-        $posts = new WP_Query( $args );
+        $posts = get_posts( $args );
 
         if($posts) {
-            foreach($posts->posts as $id) {
+            foreach($posts as $id) {
                 $pois[$id] = [
                     'lat' => current(get_post_meta($id, $lat)),
                     'lng' => current(get_post_meta($id, $lng)),
