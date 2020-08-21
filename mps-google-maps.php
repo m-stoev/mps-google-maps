@@ -3,7 +3,7 @@
  * Plugin Name: Miroslav PS Google Maps Plugin
  * Plugin URI: https://github.com/m-stoev/mps-google-maps
  * Description: Plugin for Google maps and POIs.
- * Version: 1.6
+ * Version: 1.7
  * Author: Miroslav Stoev
  * Text Domain: mps-google-maps
  * Domain Path: /langs
@@ -38,34 +38,32 @@ function mps_gm_load_scripts() {
 }
 
 function mps_gm_open_post($post) {
-	if(is_admin() or is_home()) {
+	if(is_admin() or is_home() or is_archive()) {
 		return;
 	}
 	
 	$current_page = urldecode(add_query_arg( array() )); // the url
-	
-	if(strpos($current_page, __('Gallery', 'mps-google-maps')) !== false) {
-		// get fields names
-		$lat_field_name		= get_option('lat_met_field', false);
-		$lng_field_name		= get_option('lng_met_field', false);
-		$title_link			= get_option('title_link_met_field', false);
+		
+	// get fields names
+	$lat_field_name	= get_option('lat_met_field', false);
+	$lng_field_name	= get_option('lng_met_field', false);
+	$title_link	= get_option('title_link_met_field', false);
 
-		if(!$lat_field_name or !$lng_field_name or !$title_link) {
-			return;
-		}
-
-		$lat		= current(get_post_meta($post->ID, $lat_field_name, []));
-		$lng		= current(get_post_meta($post->ID, $lng_field_name, []));
-
-		if(empty($lat) or empty($lng)) {
-			return;
-		}
-
-		$g_map_url = 'https://www.google.com/maps/place/';
-
-		$post->post_title = '<a href="' . esc_url($g_map_url . $lat . ',' . $lng)
-			. '" rel="nofollow" target="_blank">' . $post->post_title . '</a>';
+	if(!$lat_field_name or !$lng_field_name or !$title_link) {
+		return;
 	}
+
+	$lat	= current(get_post_meta($post->ID, $lat_field_name, []));
+	$lng	= current(get_post_meta($post->ID, $lng_field_name, []));
+
+	if(empty($lat) or empty($lng)) {
+		return;
+	}
+
+	$g_map_url = 'https://www.google.com/maps/place/';
+
+	$post->post_title = '<a href="' . esc_url($g_map_url . $lat . ',' . $lng)
+		. '" rel="nofollow" target="_blank">' . $post->post_title . '</a>';
 }
 
 function mps_gm_add_plugin_menu() {
